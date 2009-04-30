@@ -1,0 +1,75 @@
+= Structr
+
+Bind plain text to Ruby classes.
+NO TESTS!
+
+Inspired by ROXML http://github.com/Empact/roxml/tree/master
+
+== Usage
+
+  require 'structr'
+
+  Load = Struct.new(:one, :five, :fifteen)
+  ProcessItem = Struct.new(:pid, :user)
+
+  class Top
+    include Structr
+
+    converter :load do |(one, five, fifteen)|
+      Load.new(one.to_f, five.to_f, fifteen.to_f)
+    end
+
+    converter :process do |(pid, user)|
+      ProcessItem.new(pid.to_i, user)
+    end
+
+    field_accessor  :uptime, /top - (\d+):(\d+):(\d+)/ do |h, m, s|
+      h.to_i * 3600 + m.to_i * 60 + s.to_i
+    end
+    field_accessor  :cpu_string, /(Cpu.*?)\n/
+    load_accessor   :load, /load average: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)/
+    int_accessor    :tasks, /Tasks:\s+(\d+)/
+    int_accessor    :memory, /Mem:\s+(\d+)/
+    field           :processes, /^\s*(\d+)\s(\S+)/, &converter(:process)
+
+    def processes
+      @processes
+    end
+
+    def users
+      @processes.map {|p| p.user }.uniq
+    end
+
+    def highest_pid
+      @processes.map {|p| p.pid }.sort.last
+    end
+  end
+
+  top = Top.structr(`top -b -n 1`)
+
+  puts "Load is #{top.load.one}"
+  puts "Up since #{top.uptime} seconds"
+  puts top.cpu_string
+  puts "#{top.tasks} Tasks"
+  puts "#{top.memory / 1024}MB memory available"
+  puts "Users: #{top.users.join(", ")}"
+  puts "Highest PID: #{top.highest_pid}"
+
+=== Examples
+
+  See examples/ for further examples
+
+== Installation
+
+=== Gem
+
+  gem source -a gems.github.com
+
+  gem install splattael-structr
+
+== Authors:
+ * Peter Suschlik
+
+== Changelog
+
+See CHANGELOG file.
