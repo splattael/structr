@@ -63,12 +63,11 @@ Inspired by ROXML http://github.com/Empact/roxml/tree/master
 
 === Gem
 
-  gem source -a gems.github.com
-
+  gem source -a http://gems.github.com
   gem install splattael-structr
 
 == Authors:
- * Peter Suschlik
+* Peter Suschlik
 
 == Changelog
 
