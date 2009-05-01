@@ -5,7 +5,7 @@ LineItem = Struct.new(:number, :description, :price)
 class Invoice
   include Structr
 
-  converter :line_item do |matched|
+  converter :line_item do |*matched|
     LineItem.new(*matched)
   end
 

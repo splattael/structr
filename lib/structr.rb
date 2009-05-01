@@ -78,10 +78,10 @@ module Structr
 
   class FieldDefinition
 
-    attr_accessor :name
+    attr_accessor :name, :block
 
     def initialize(name, regexp, &block)
-      @name, @regexp, @block = name, regexp, block
+      @name, @regexp, @block = name.to_s, regexp, block
     end
 
     def setter
@@ -100,7 +100,7 @@ module Structr
       string.scan(@regexp).map do |matched|
         matched = matched.first  if matched.size == 1
         if @block
-          @block.call(matched)
+          @block.call(*matched)
         else
           matched
         end
