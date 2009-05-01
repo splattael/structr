@@ -19,7 +19,7 @@ class Invoice
   end
 end
 
-string = (STDIN.tty? ? DATA : STDIN).readlines.join
+string = (STDIN.tty? ? DATA : STDIN).read
 
 invoice = Invoice.structr(string)
 p invoice
