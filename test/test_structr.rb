@@ -5,6 +5,7 @@ class TestStructr < Test::Unit::TestCase
   def setup
     @klass = Class.new
     @klass.send(:include, Structr)
+    @regexp = %r{}
   end
 
   def test_module_inclusion
@@ -19,9 +20,9 @@ class TestStructr < Test::Unit::TestCase
   def test_fields_addition
     assert @klass.fields.empty?
 
-    @klass.field(:number, /(\d+)/)
-    @klass.field(:number, /(\d+)/)
-    @klass.field(:white, /(\s+)/)
+    @klass.field(:number, @regexp)
+    @klass.field(:number, @regexp)
+    @klass.field(:white, @regexp)
 
     assert_equal 3, @klass.fields.size
   end
@@ -32,8 +33,8 @@ class TestStructr < Test::Unit::TestCase
   end
 
   def test_default_field
-    @klass.field(:no_acc_1, //)
-    @klass.field(:no_acc_2, //, :accessor => false)
+    @klass.field(:no_acc_1, @regexp)
+    @klass.field(:no_acc_2, @regexp, :accessor => false)
 
     instance = @klass.new
     [ :acc_1, :acc_2 ].each do |acc|
@@ -43,9 +44,9 @@ class TestStructr < Test::Unit::TestCase
   end
 
   def test_field_accessor
-    @klass.field(:acc_1, //, :accessor => true)
-    @klass.field(:acc_2, //, :accessor => :accessor)
-    @klass.field_accessor(:acc_3, //)
+    @klass.field(:acc_1, @regexp, :accessor => true)
+    @klass.field(:acc_2, @regexp, :accessor => :accessor)
+    @klass.field_accessor(:acc_3, @regexp)
 
     instance = @klass.new
 
@@ -56,8 +57,8 @@ class TestStructr < Test::Unit::TestCase
   end
 
   def test_field_reader
-    @klass.field(:rdr_1, //, :accessor => :reader)
-    @klass.field_reader(:rdr_2, //)
+    @klass.field(:rdr_1, @regexp, :accessor => :reader)
+    @klass.field_reader(:rdr_2, @regexp)
 
     instance = @klass.new
 
@@ -68,8 +69,8 @@ class TestStructr < Test::Unit::TestCase
   end
 
   def test_field_writer
-    @klass.field(:wrt_1, //, :accessor => :writer)
-    @klass.field_writer(:wrt_2, //)
+    @klass.field(:wrt_1, @regexp, :accessor => :writer)
+    @klass.field_writer(:wrt_2, @regexp)
 
     instance = @klass.new
 
@@ -113,10 +114,10 @@ class TestStructr < Test::Unit::TestCase
   end
 
   def test_method_missing_converter_with_accessor
-    @klass.int(:no_acc, //)
-    @klass.int_reader(:rdr, //)
-    @klass.int_writer(:wrt, //)
-    @klass.int_accessor(:acc, //)
+    @klass.int(:no_acc, @regexp)
+    @klass.int_reader(:rdr, @regexp)
+    @klass.int_writer(:wrt, @regexp)
+    @klass.int_accessor(:acc, @regexp)
 
     instance = @klass.new
 
@@ -133,7 +134,7 @@ class TestStructr < Test::Unit::TestCase
   def test_method_missing_with_invalid_converter
     [ :unkn, :unkn_reader, :unkn_writer, :unkn_accessor ].each do |field_name| 
       assert_raise(NoMethodError) do
-        @klass.send(field_name, //)
+        @klass.send(field_name, @regexp)
       end
     end
   end
