@@ -35,7 +35,7 @@ module Structr
       field(name, regexp, :accessor => :reader, &block)
     end
 
-    def field_reader(name, regexp, &block)
+    def field_writer(name, regexp, &block)
       field(name, regexp, :accessor => :writer, &block)
     end
 
