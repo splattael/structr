@@ -49,7 +49,7 @@ module Structr
         value = field.match(content)
         value = value.first if value.size < 2
         if instance.respond_to?(field.setter)
-          instance.send(field.setter, value) 
+          instance.send(field.setter, value)
         else
           instance.instance_variable_set(field.ivar, value)
         end
@@ -86,7 +86,7 @@ module Structr
 
     def setter
       :"#{name}="
-    end 
+    end
 
     def getter
       :"#{name}"

@@ -1,143 +1,144 @@
-require File.dirname(__FILE__) + "/helper.rb"
+require 'helper'
 
-class TestStructr < Test::Unit::TestCase
-
-  def setup
-    @klass = Class.new
-    @klass.send(:include, Structr)
-    @regexp = %r{}
-  end
-
-  def test_module_inclusion
-    assert @klass.included_modules.include?(Structr)
-
-    %w(field field_reader field_writer field_accessor
-      converter structr fields).each do |method|
-      assert @klass.respond_to?(:"#{method}"), "Responds to #{method}"
+context Structr do
+  setup do
+    Class.new do
+      include Structr
     end
   end
 
-  def test_fields_addition
-    assert @klass.fields.empty?
-
-    @klass.field(:number, @regexp)
-    @klass.field(:number, @regexp)
-    @klass.field(:white, @regexp)
-
-    assert_equal 3, @klass.fields.size
+  asserts("module inclusion") { topic.included_modules.include?(Structr) }
+  %w(field field_reader field_writer field_accessor converter structr fields).each do |method|
+    asserts("responds to #{method}").respond_to(method)
   end
+  asserts("no fields") { topic.fields.empty? }
 
-  def test_field_parameter
-    assert_raise(ArgumentError) { @klass.field }
-    assert_raise(ArgumentError) { @klass.field(:name) }
-  end
+  asserts("error on no field name") { topic.field }.raises(ArgumentError)
+  asserts("error on no regexp") { topic.field(:name) }.raises(ArgumentError)
 
-  def test_default_field
-    @klass.field(:no_acc_1, @regexp)
-    @klass.field(:no_acc_2, @regexp, :accessor => false)
+  context "with field" do
+    context "added" do
+      setup do
+        topic.field :foo, %r{}
+        topic.field :bar, %r{}
+        topic.field :baz, %r{}
+        topic
+      end
 
-    instance = @klass.new
-    [ :acc_1, :acc_2 ].each do |acc|
-      assert !instance.respond_to?(acc), "Has no getter for #{acc}"
-      assert !instance.respond_to?(:"#{acc}="), "Has no setter for #{acc}"
+      asserts("3 added") { topic.fields.size }.equals(3)
     end
-  end
 
-  def test_field_accessor
-    @klass.field(:acc_1, @regexp, :accessor => true)
-    @klass.field(:acc_2, @regexp, :accessor => :accessor)
-    @klass.field_accessor(:acc_3, @regexp)
-
-    instance = @klass.new
-
-    [ :acc_1, :acc_2, :acc_3 ].each do |acc|
-      assert instance.respond_to?(acc), "Has getter for #{acc}"
-      assert instance.respond_to?(:"#{acc}="), "Has setter for #{acc}"
-    end
-  end
-
-  def test_field_reader
-    @klass.field(:rdr_1, @regexp, :accessor => :reader)
-    @klass.field_reader(:rdr_2, @regexp)
-
-    instance = @klass.new
-
-    [ :rdr_1, :rdr_2 ].each do |acc|
-      assert instance.respond_to?(acc), "Has getter for #{acc}"
-      assert !instance.respond_to?(:"#{acc}="), "Has setter for #{acc}"
-    end
-  end
-
-  def test_field_writer
-    @klass.field(:wrt_1, @regexp, :accessor => :writer)
-    @klass.field_writer(:wrt_2, @regexp)
-
-    instance = @klass.new
-
-    [ :wrt_1, :wrt_2 ].each do |acc|
-      assert !instance.respond_to?(acc), "Has getter for #{acc}"
-      assert instance.respond_to?(:"#{acc}="), "Has setter for #{acc}"
-    end
-  end
-
-  def test_default_converter
-    [ :int, :float, :date, :string ].each do |name|
-      converter = @klass.converter(name)
-      assert_instance_of Proc, converter, "Has converter for #{name}"
-    end
-  end
-
-  def test_add_conveter
-    assert_nil @klass.converter(:proced)
-    assert_nil @klass.converter(:blocked)
-
-    @klass.converter(:proced, proc {|p| p })
-    @klass.converter(:blocked) {|p| p }
-
-    assert_instance_of Proc, @klass.converter(:proced)
-    assert_instance_of Proc, @klass.converter(:blocked)
-  end
-
-  def test_pass_converter
-    pass = proc {|p| p }
-    @klass.converter :pass, &pass
-
-    @klass.field(:block, /(\d+)/) {|p| pass.call(p) }
-    @klass.field(:param, /(\d+)/, &@klass.converter(:pass))
-    @klass.pass(:mm, /(\d+)/)
-    @klass.pass(:mm_overwritten, /(\d+)/) {|i| fail("I am overwritten") }
-
-    assert "1", @klass.fields[0].block.call("1")
-    assert "2", @klass.fields[1].block.call("2")
-    assert "3", @klass.fields[2].block.call("3")
-    assert "4", @klass.fields[3].block.call("4")
-  end
-
-  def test_method_missing_converter_with_accessor
-    @klass.int(:no_acc, @regexp)
-    @klass.int_reader(:rdr, @regexp)
-    @klass.int_writer(:wrt, @regexp)
-    @klass.int_accessor(:acc, @regexp)
-
-    instance = @klass.new
-
-    assert !instance.respond_to?(:no_acc)
-    assert !instance.respond_to?(:no_acc=)
-    assert  instance.respond_to?(:rdr)
-    assert !instance.respond_to?(:rdr=)
-    assert !instance.respond_to?(:wrt)
-    assert  instance.respond_to?(:wrt=)
-    assert  instance.respond_to?(:acc)
-    assert  instance.respond_to?(:acc=)
-  end
-
-  def test_method_missing_with_invalid_converter
-    [ :unkn, :unkn_reader, :unkn_writer, :unkn_accessor ].each do |field_name| 
-      assert_raise(NoMethodError) do
-        @klass.send(field_name, @regexp)
+    context "defaults" do
+      setup do
+        topic.field(:no_acc_1, %r{})
+        topic.field(:no_acc_2, %r{}, :accessor => false)
+      end
+      [ :acc_1, :acc_2 ].each do |field|
+        asserts("no getter for #{field}") { !topic.respond_to?(field) }
+        asserts("no setter for #{field}") { !topic.respond_to?(:"#{field}=") }
       end
     end
-  end
+
+    context "accessors" do
+      setup do
+        topic.field(:acc_1, %r{}, :accessor => true)
+        topic.field(:acc_2, %r{}, :accessor => :accessor)
+        topic.field_accessor(:acc_3, %r{})
+        topic.new
+      end
+
+      [ :acc_1, :acc_2, :acc_3 ].each do |method|
+        asserts("has getter for #{method}") { topic.respond_to?(method) }
+        asserts("has setter for #{method}") { topic.respond_to?(:"#{method}=") }
+      end
+    end
+
+    context "readers" do
+      setup do
+        topic.field(:rdr_1, %r{}, :accessor => :reader)
+        topic.field_reader(:rdr_2, %r{})
+        topic.new
+      end
+
+      [ :rdr_1, :rdr_2 ].each do |method|
+        asserts("has getter for #{method}") { topic.respond_to?(method) }
+        asserts("has no sett for #{method}") { !topic.respond_to?(:"#{method}=") }
+      end
+    end
+
+    context "writers" do
+      setup do
+        topic.field(:wrt_1, %r{}, :accessor => :writer)
+        topic.field_writer(:wrt_2, %r{})
+        topic.new
+      end
+
+      [ :wrt_1, :wrt_2 ].each do |method|
+        asserts("has no getter for #{method}") { !topic.respond_to?(method) }
+        asserts("has setter for #{method}") { topic.respond_to?(:"#{method}=") }
+      end
+    end
+  end # with field
+
+  context "with converter" do
+    [ :int, :float, :date, :string ].each do |name|
+      asserts("default converter #{name} is a Proc") { topic.converter(name) }.kind_of(Proc)
+    end
+
+    [ :unkn, :unkn_reader, :unkn_writer, :unkn_accessor ].each do |field_name|
+      asserts("raises NoMethodError for #{field_name}") { topic.send(field_name, %r{}) }.raises(NoMethodError)
+    end
+
+    context "added" do
+      setup do
+        topic.converter(:proced, proc { |p| p })
+        topic.converter(:blocked) { |p| p }
+        topic
+      end
+
+      asserts("proced converter is a Proc") { topic.converter(:proced) }.kind_of(Proc)
+      asserts("blocked converter is a Proc") { topic.converter(:blocked) }.kind_of(Proc)
+    end
+
+    context "by-passed" do
+      setup do
+        pass = proc { |p| p }
+
+        topic.converter :pass, &pass
+        topic.field(:block, /(\d+)/) { |p| pass.call(p) }
+        topic.field(:param, /(\d+)/, &topic.converter(:pass))
+        topic.pass(:mm, /(\d+)/)
+        topic.pass(:mm_overwritten, /(\d+)/) { |i| fail("I am overwritten") }
+        topic
+      end
+
+      asserts("block field passes 1") { topic.fields[0].block.call(1) }.equals(1)
+      asserts("param field passes 1") { topic.fields[1].block.call(1) }.equals(1)
+      asserts("mm field passes 1") { topic.fields[2].block.call(1) }.equals(1)
+      asserts("mm_overwritten field passes 1") { topic.fields[3].block.call(1) }.equals(1)
+    end
+
+    context "using method missing" do
+      setup do
+        topic.int(:no_acc, %r{})
+        topic.int_reader(:rdr, %r{})
+        topic.int_writer(:wrt, %r{})
+        topic.int_accessor(:acc, %r{})
+        topic.new
+      end
+
+      asserts("no getter for no_acc") { !topic.respond_to?(:no_acc) }
+      asserts("no setter for no_acc") { !topic.respond_to?(:no_acc=) }
+      asserts("getter for rdr") { topic.respond_to?(:rdr) }
+      asserts("no setter for rdr") { !topic.respond_to?(:rdr=) }
+      asserts("no getter for wrt") { !topic.respond_to?(:wrt) }
+      asserts("setter for wrt") { topic.respond_to?(:wrt=) }
+      asserts("getter for acc") { topic.respond_to?(:acc) }
+      asserts("setter for acc") { topic.respond_to?(:acc=) }
+
+    end
+
+  end # with converters
 
   # TODO test structr
   # TODO integration tests

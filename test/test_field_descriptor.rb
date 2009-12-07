@@ -1,57 +1,31 @@
-require File.dirname(__FILE__) + "/helper.rb"
+require 'helper'
 
-class TestFieldDescriptor < Test::Unit::TestCase
+include Structr
 
-  include Structr
+context Struct::FieldDefinition do
+  context "with single" do
+    setup { FieldDefinition.new(:number, /(\d+)/) }
 
-  def setup
-    @single = FieldDefinition.new(:number, /(\d+)/)
-    @multiple = FieldDefinition.new(:number, /(\d+),(\d+)/)
+    asserts("name") { topic.name }.equals("number")
+    asserts("getter") { topic.getter }.equals(:number)
+    asserts("setter") { topic.setter }.equals(:number=)
+    asserts("ivar") { topic.ivar }.equals(:@number)
+    asserts("no block") { topic.block }.nil
+    asserts("no match") { topic.match("no match") }.equals([])
+    asserts("match without block") { topic.match("23 < 42") }.equals(["23", "42"])
+    asserts("match with block") do
+      topic.block = proc { |m| m.to_i }
+      topic.match("23 < 42")
+    end.equals([23, 42])
   end
 
-  def test_number_accessors
-    assert_equal "number", @single.name
-    assert_equal :number, @single.getter
-    assert_equal :number=, @single.setter
-    assert_equal :@number, @single.ivar
-    assert_nil @single.block
+  context "multiple" do
+    setup { FieldDefinition.new(:number, /(\d+),(\d+)/) }
+
+    asserts("match without block") { topic.match("costs 23,42$") }.equals([["23", "42"]])
+    asserts("matech with block") do
+      topic.block = proc {|(dollar, cents)| dollar.to_i * 100 + cents.to_i }
+      topic.match("costs 23,42$")
+    end.equals([2342])
   end
-
-  def test_no_match
-    string = "no match"
-
-    matched = @single.match(string)
-    assert_equal [], matched
-  end
-
-  def test_single_match_without_block
-    string = "23 is lower than 42"
-
-    matched = @single.match(string)
-    assert_equal ["23", "42"], matched
-  end
-
-  def test_single_match_with_block
-    string = "23 is lower than 42"
-    @single.block = proc {|m| m.to_i }
-
-    matched = @single.match(string)
-    assert_equal [23, 42], matched
-  end
-
-  def test_multiple_match_without_block
-    string = "costs 23,42$"
-
-    matched = @multiple.match(string)
-    assert_equal [["23", "42"]], matched
-  end
-
-  def test_multiple_match_with_block
-    string = "costs 23,42$"
-    @multiple.block = proc {|(dollar, cents)| dollar.to_i * 100 + cents.to_i }
-
-    matched = @multiple.match(string)
-    assert_equal [2342], matched
-  end
-
 end
