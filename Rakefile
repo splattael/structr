@@ -1,3 +1,4 @@
+require 'rubygems'
 require 'rake'
 require 'rake/testtask'
 require 'rake/rdoctask'
@@ -30,6 +31,20 @@ Rake::TestTask.new(:test) do |test|
   test.test_files = FileList.new('test/test_*.rb')
   test.libs << 'test'
   test.verbose = true
+end
+
+namespace :test do
+  desc "Run all tests on multiple ruby versions (requires rvm)"
+  task(:portability) do
+    %w(1.8.6 1.8.7 ree 1.9.1 1.9.2 jruby).each do |version|
+      system <<-BASH
+        bash -c 'source ~/.rvm/scripts/rvm;
+        rvm #{version};
+        echo "--------- v#{version} ----------\n";
+        rake -s test'
+      BASH
+    end
+  end
 end
 
 # RDoc

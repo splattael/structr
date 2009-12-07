@@ -1,3 +1,4 @@
+require 'date'
 
 module Structr
 
@@ -8,10 +9,10 @@ module Structr
   module ClassMethods
 
     Converter = {
-      :int    =>  proc {|m| m.to_i },
-      :float  =>  proc {|m| m.to_f },
-      :date   =>  proc {|m| Date.parse(m) },
-      :string =>  proc {|m| m },
+      :int    =>  proc { |m| m.to_i },
+      :float  =>  proc { |m| m.to_f },
+      :date   =>  proc { |m| ::Date.parse(m) },
+      :string =>  proc { |m| m.to_s },
     }
 
     def field(name, regexp, options={}, &block)

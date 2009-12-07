@@ -6,11 +6,11 @@ ProcessItem = Struct.new(:pid, :user)
 class Top
   include Structr
 
-  converter :load do |(one, five, fifteen)|
+  converter :load do |one, five, fifteen|
     Load.new(one.to_f, five.to_f, fifteen.to_f)
   end
 
-  converter :process do |(pid, user)|
+  converter :process do |pid, user|
     ProcessItem.new(pid.to_i, user)
   end
 

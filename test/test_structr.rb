@@ -89,6 +89,13 @@ context Structr do
       asserts("raises NoMethodError for #{field_name}") { topic.send(field_name, %r{}) }.raises(NoMethodError)
     end
 
+    context "default" do
+      asserts("int converts to_i") { topic.converter(:int).call("2") }.equals(2)
+      asserts("int converts to_f") { topic.converter(:float).call("2") }.equals(2.0)
+      asserts("int converts to Date") { topic.converter(:date).call("2009-09-09").to_s }.equals("2009-09-09")
+      asserts("int converts to String") { topic.converter(:string).call(2) }.equals("2")
+    end
+
     context "added" do
       setup do
         topic.converter(:proced, proc { |p| p })

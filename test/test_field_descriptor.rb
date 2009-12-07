@@ -24,7 +24,7 @@ context Struct::FieldDefinition do
 
     asserts("match without block") { topic.match("costs 23,42$") }.equals([["23", "42"]])
     asserts("matech with block") do
-      topic.block = proc {|(dollar, cents)| dollar.to_i * 100 + cents.to_i }
+      topic.block = proc { |dollar, cents| dollar.to_i * 100 + cents.to_i }
       topic.match("costs 23,42$")
     end.equals([2342])
   end
