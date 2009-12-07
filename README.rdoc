@@ -61,10 +61,11 @@ Inspired by ROXML http://github.com/Empact/roxml/tree/master
 
 == Installation
 
-=== Gem
+=== Gem via gemcutter
 
-  gem source -a http://gems.github.com
-  gem install splattael-structr
+  gem install gemcutter
+  gem tumble
+  gem install structr
 
 == Authors:
 * Peter Suschlik
