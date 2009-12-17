@@ -1,7 +1,6 @@
 = Structr
 
 Bind plain text to Ruby classes.
-NO TESTS!
 
 Inspired by ROXML http://github.com/Empact/roxml/tree/master
 
@@ -61,10 +60,8 @@ Inspired by ROXML http://github.com/Empact/roxml/tree/master
 
 == Installation
 
-=== Gem via gemcutter
+=== Installation
 
-  gem install gemcutter
-  gem tumble
   gem install structr
 
 == Authors:
