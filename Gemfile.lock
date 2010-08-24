@@ -1,0 +1,37 @@
+--- 
+dependencies: 
+  jeweler: 
+    group: 
+    - :default
+    version: ">= 0"
+  riot_notifier: 
+    group: 
+    - :default
+    version: ~> 0.3
+  riot: 
+    group: 
+    - :default
+    version: ">= 0"
+specs: 
+- gemcutter: 
+    version: 0.6.1
+- git: 
+    version: 1.2.5
+- json_pure: 
+    version: 1.4.6
+- rubyforge: 
+    version: 2.0.4
+- jeweler: 
+    version: 1.4.0
+- rr: 
+    version: 1.0.0
+- term-ansicolor: 
+    version: 1.0.5
+- riot: 
+    version: 0.11.3
+- riot_notifier: 
+    version: 0.3.0
+hash: 07f4b9164da6836b203a4777ceeebe184ab7f22f
+sources: 
+- Rubygems: 
+    uri: http://gemcutter.org

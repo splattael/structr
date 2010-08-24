@@ -18,7 +18,7 @@ Jeweler::Tasks.new do |gem|
   gem.extra_rdoc_files = [ "README.rdoc" ]
 
   gem.add_development_dependency "riot"
-  gem.add_development_dependency "riot_notifier", ">= 0.0.7"
+  gem.add_development_dependency "riot_notifier", "~> 0.3"
 
   gem.test_files = Dir.glob('test/test_*.rb')
 end

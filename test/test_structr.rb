@@ -9,7 +9,7 @@ context Structr do
 
   asserts("module inclusion") { topic.included_modules.include?(Structr) }
   %w(field field_reader field_writer field_accessor converter structr fields).each do |method|
-    asserts("responds to #{method}").respond_to(method)
+    asserts_topic("to respond to #{method}").respond_to(method)
   end
   asserts("no fields") { topic.fields.empty? }
 
