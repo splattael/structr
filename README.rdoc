@@ -1,5 +1,7 @@
 = Structr
 
+{<img src="https://travis-ci.org/splattael/structr.png?branch=master" alt="Build Status" />}[https://travis-ci.org/splattael/structr] {<img src="https://badge.fury.io/rb/structr.png" alt="Gem Version" />}[http://badge.fury.io/rb/structr] {<img src="https://codeclimate.com/github/splattael/structr.png" />}[https://codeclimate.com/github/splattael/structr]
+
 Bind plain text to Ruby classes.
 
 Inspired by ROXML http://github.com/Empact/roxml/tree/master
