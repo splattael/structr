@@ -71,7 +71,7 @@ module Structr
       if converter = converter(name.to_sym)
         field(args[0], args[1], :accessor => $1 ? $1.to_sym : nil, &converter)
       else
-        super(method, *args, &block)
+        super
       end
     end
 
