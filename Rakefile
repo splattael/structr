@@ -1,13 +1,13 @@
 require 'bundler/gem_tasks'
 require 'rake'
 
-desc 'Default: run unit tests.'
-task :default => :test
+desc 'Default: run specs.'
+task :default => :spec
 
 require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.test_files = FileList.new('test/test_*.rb')
-  test.libs << 'test'
+Rake::TestTask.new(:spec) do |test|
+  test.test_files = FileList.new('spec/*_spec.rb')
+  test.libs << 'spec'
   test.verbose = true
 end
 

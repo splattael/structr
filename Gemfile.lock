@@ -7,18 +7,16 @@ GEM
   remote: https://rubygems.org/
   specs:
     json (1.8.1)
+    minitest (5.5.1)
     rake (10.1.0)
     rdoc (4.0.1)
       json (~> 1.4)
-    riot (0.12.7)
-      rr
-    rr (1.1.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  minitest
   rake
   rdoc
-  riot
   structr!
