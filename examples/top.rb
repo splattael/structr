@@ -14,25 +14,23 @@ class Top
     ProcessItem.new(pid.to_i, user)
   end
 
-  field_accessor  :uptime, /top - (\d+):(\d+):(\d+)/ do |h, m, s|
+  field_accessor :uptime, /top - (\d+):(\d+):(\d+)/ do |h, m, s|
     h.to_i * 3600 + m.to_i * 60 + s.to_i
   end
-  field_accessor  :cpu_string, /(Cpu.*?)\n/
-  load_accessor   :load, /load average: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)/
-  int_accessor    :tasks, /Tasks:\s+(\d+)/
-  int_accessor    :memory, /Mem:\s+(\d+)/
-  field           :processes, /^\s*(\d+)\s(\S+)/, &converter(:process)
+  field_accessor :cpu_string, /(Cpu.*?)\n/
+  load_accessor :load, /load average: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)/
+  int_accessor :tasks, /Tasks:\s+(\d+)/
+  int_accessor :memory, /Mem:\s+(\d+)/
+  field :processes, /^\s*(\d+)\s(\S+)/, &converter(:process)
 
-  def processes
-    @processes
-  end
+  attr_reader :processes
 
   def users
-    @processes.map {|p| p.user }.uniq
+    @processes.map(&:user).uniq
   end
 
   def highest_pid
-    @processes.map {|p| p.pid }.sort.last
+    @processes.map(&:pid).sort.last
   end
 end
 
@@ -43,5 +41,5 @@ puts "Up since #{top.uptime} seconds"
 puts top.cpu_string
 puts "#{top.tasks} Tasks"
 puts "#{top.memory / 1024}MB memory available"
-puts "Users: #{top.users.join(", ")}"
+puts "Users: #{top.users.join(', ')}"
 puts "Highest PID: #{top.highest_pid}"

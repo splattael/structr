@@ -11,3 +11,4 @@ matrix:
   allow_failures:
     - rvm: ruby-head
   fast_finish: true
+bundler_args: --without tools

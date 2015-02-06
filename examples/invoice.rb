@@ -9,10 +9,10 @@ class Invoice
     LineItem.new(*matched)
   end
 
-  int_accessor    :number,      /#(\d+)/
-  field_accessor  :address,     /Address:\n(.*?)\n(.*?)\n(.*?)\n/
-  date_accessor   :date,        /on (\d+-\d+-\d+)/
-  line_item       :line_items,  /^(\d+)\.\s+(.*?)\s+(\d+,\d+)$/
+  int_accessor :number,      /#(\d+)/
+  field_accessor :address,     /Address:\n(.*?)\n(.*?)\n(.*?)\n/
+  date_accessor :date,        /on (\d+-\d+-\d+)/
+  line_item :line_items,  /^(\d+)\.\s+(.*?)\s+(\d+,\d+)$/
 
   def items
     Array(@line_items)
