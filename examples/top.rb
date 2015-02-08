@@ -14,10 +14,10 @@ class Top
     ProcessItem.new(pid.to_i, user)
   end
 
-  field_accessor :uptime, /top - (\d+):(\d+):(\d+)/ do |h, m, s|
+  field :uptime, /top - (\d+):(\d+):(\d+)/ do |h, m, s|
     h.to_i * 3600 + m.to_i * 60 + s.to_i
   end
-  field_accessor :cpu_string, /(Cpu.*?)\n/
+  field :cpu_string, /(Cpu.*?)\n/
   load_accessor :load, /load average: (\d+\.\d+), (\d+\.\d+), (\d+\.\d+)/
   int_accessor :tasks, /Tasks:\s+(\d+)/
   int_accessor :memory, /Mem:\s+(\d+)/

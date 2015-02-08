@@ -36,17 +36,17 @@ describe Structr do
 
     describe 'defaults' do
       before do
-        klass.field(:no_acc_1, %r{})
-        klass.field(:no_acc_2, %r{}, accessor: false)
+        klass.field(:acc_1, %r{})
+        klass.field(:acc_2, %r{}, accessor: false)
       end
 
-      it 'has no getters' do
-        refute_respond_to subject, :acc_1
+      it 'getters' do
+        assert_respond_to subject, :acc_1
         refute_respond_to subject, :acc_2
       end
 
-      it 'has no setters' do
-        refute_respond_to subject, :acc_1=
+      it 'setters' do
+        assert_respond_to subject, :acc_1=
         refute_respond_to subject, :acc_2=
       end
     end
@@ -55,53 +55,44 @@ describe Structr do
       before do
         klass.field(:acc_1, %r{}, accessor: true)
         klass.field(:acc_2, %r{}, accessor: :accessor)
-        klass.field_accessor(:acc_3, %r{})
       end
 
       it 'has getters' do
         assert_respond_to subject, :acc_1
         assert_respond_to subject, :acc_2
-        assert_respond_to subject, :acc_3
       end
 
       it 'has setters' do
         assert_respond_to subject, :acc_1=
         assert_respond_to subject, :acc_2=
-        assert_respond_to subject, :acc_3=
       end
     end
 
     describe 'readers' do
       before do
         klass.field(:rdr_1, %r{}, accessor: :reader)
-        klass.field_reader(:rdr_2, %r{})
       end
 
       it 'has getters' do
         assert_respond_to subject, :rdr_1
-        assert_respond_to subject, :rdr_2
       end
 
       it 'has no setters' do
         refute_respond_to subject, :rdr_1=
-        refute_respond_to subject, :rdr_2=
       end
     end
 
     describe 'writers' do
       before do
         klass.field(:wrt_1, %r{}, accessor: :writer)
-        klass.field_writer(:wrt_2, %r{})
       end
 
       it 'has no getters' do
         refute_respond_to subject, :wrt_1
-        refute_respond_to subject, :wrt_2
       end
 
       it 'has no setters' do
         assert_respond_to subject, :wrt_1=
-        assert_respond_to subject, :wrt_2=
       end
     end
   end # with field
@@ -186,12 +177,12 @@ describe Structr do
         klass.int_accessor(:acc, %r{})
       end
 
-      it 'no getter for no_acc' do
-        refute_respond_to subject, :no_acc
+      it 'getter for no_acc' do
+        assert_respond_to subject, :no_acc
       end
 
       it 'no setter for no_acc' do
-        refute_respond_to subject, :no_acc=
+        assert_respond_to subject, :no_acc=
       end
 
       it 'getter for rdr' do

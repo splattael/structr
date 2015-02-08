@@ -23,21 +23,9 @@ module Structr
         attr_reader(name)
       when :writer
         attr_writer(name)
-      when :accessor, true
+      when :accessor, true, NilClass
         attr_accessor(name)
       end
-    end
-
-    def field_accessor(name, regexp, &block)
-      field(name, regexp, :accessor => true, &block)
-    end
-
-    def field_reader(name, regexp, &block)
-      field(name, regexp, :accessor => :reader, &block)
-    end
-
-    def field_writer(name, regexp, &block)
-      field(name, regexp, :accessor => :writer, &block)
     end
 
     def fields
